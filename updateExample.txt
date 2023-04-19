@@ -1,0 +1,65 @@
+import React, { useEffect, useState } from 'react'
+
+const Todo = ({ list, setList }) => {
+    const [input, setInput] = useState('')
+    const [editId, setEditId] = useState('')
+    const [isEdit,setIsEdit] = useState(false)
+
+
+    const changeHandler = (e) => {
+        setInput(e.target.value)
+    }
+
+    const submitHandler = (e) => {
+        e.preventDefault()
+        console.log(input);
+        if (isEdit) {
+            const newList = list.map(li => {
+                if (li.id === editId) {
+                    return {
+                        ...li,
+                        input: input
+                    }
+                } else {
+                    return li
+                }
+            })
+            setList(newList)
+            setIsEdit(false)
+            setEditId('')
+        } else {
+            setList([...list, {
+                id: Math.random(),
+                input: input
+            }])
+        }
+    }
+    const editHandler = (id) => {
+        setEditId(id)
+        setIsEdit(true)
+        const item = list.find(li => li.id === id)
+        if (item) {
+            setInput(item.input)
+        }
+        console.log(editId);
+    }
+    const showList = list.map(li => <div key={li.id}>
+        <p >{li.input}</p>
+        <button onClick={()=>{ editHandler (li.id) }}>Edit</button>
+    </div>)
+
+
+
+    return (
+        <div>
+            <form>
+                <input type="text" placeholder='enter input' value={input} onChange={changeHandler} />
+                <button onClick={submitHandler}>Submit</button>
+            </form>
+            {showList}
+
+        </div>
+    )
+}
+
+export default Todo
